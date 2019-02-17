@@ -5,6 +5,7 @@ import warnings
 import os
 import spacy
 import gensim
+import math
 
 import pandas as pd
 import dill as pickle
@@ -85,7 +86,9 @@ data_clean = [sent if len(sent) >= min_sent_length else []
 # BUILD & PICKLE MODELS #
 
 id2word = gensim.corpora.Dictionary(data_clean)
-id2word.filter_extremes(no_below=ext_low*len(data_clean), no_above=ext_hi)
+id2word.filter_extremes(
+        no_below=math.floor(ext_low*len(data_clean)),
+        no_above=ext_hi)
 corpus = [id2word.doc2bow(text) for text in data_clean]
 lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
                                             id2word=id2word,
